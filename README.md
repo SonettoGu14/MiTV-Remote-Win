@@ -10,10 +10,10 @@
 
 ## 功能
 
-- **音量控制** — 滑块拖拽 + 按钮微调 + 静音
+- **音量控制** — 滑块拖拽 + 按钮微调
 - **HDMI 切换** — 一键切换 HDMI 1 / HDMI 2 输入源
 - **遥控导航** — 方向键（上/下/左/右）、确认、主页、返回、菜单、电源
-- **键盘映射** — 遥控面板打开时，键盘方向键 / Enter / Backspace 自动映射为遥控器按键
+- **键盘映射** — 遥控面板打开时，键盘方向键 / Enter / Backspace 自动映射为遥控器按键（开发中）
 - **设备发现** — 自动扫描整个局域网找出所有 MiTV 设备
 - **设备信息** — 实时显示已连接设备的 IP 和名称
 
@@ -30,7 +30,7 @@
 或者克隆仓库自行编译：
 
 ```powershell
-git clone https://github.com/anomalyco/MiTV-Remote-Win.git
+git clone https://github.com/SonettoGu14/MiTV-Remote-Win.git
 cd MiTV-Remote-Win
 dotnet restore
 dotnet build -c Release
@@ -48,7 +48,7 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 
 ## 相关项目
 
-- [MiTV-Remote（macOS 版）](https://github.com/anomalyco/MiTV-Remote) — 本项目的原始版本，macOS 菜单栏运行
+- [MiTV-Remote（macOS 版）](https://github.com/SonettoGu14/MiTV-Remote) — 本项目的原始版本，macOS 菜单栏运行
 
 ## License
 
