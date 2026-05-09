@@ -1,0 +1,6 @@
+<UserControl x:Class="MiTVRemote.UI.VolumeSliderControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 自定义音量滑块控件。-->
+    <!-- 参照原 Swift 项目 VolumeSlider.swift —— 在拖拽过程中持续触发回调。-->
+</UserControl>

@@ -1,0 +1,23 @@
+# .NET build outputs
+bin/
+obj/
+*.user
+*.suo
+*.DotSettings
+
+# Visual Studio
+.vs/
+*.sln.ide/
+
+# Rider
+.idea/
+
+# macOS
+.DS_Store
+
+# Publish output
+publish/
+
+# Test results
+TestResults/
+*.trx
