@@ -20,6 +20,7 @@ AGENTS.md
 
 # Publish output
 publish/
+*.zip
 
 # Test results
 TestResults/

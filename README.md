@@ -25,16 +25,16 @@
 
 ## 安装
 
-从 [Releases](../../releases) 页面下载最新的 `MiTVRemote.exe`（自包含单文件），直接双击运行。
+从 [Releases](../../releases) 页面下载最新的 `MiTVRemote-v0.0.1-win-x64.zip`，解压后双击 `MiTVRemote.exe` 运行。
+
+> **注意：** 需要先安装 [.NET 8.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)。
 
 或者克隆仓库自行编译：
 
 ```powershell
 git clone https://github.com/SonettoGu14/MiTV-Remote-Win.git
 cd MiTV-Remote-Win
-dotnet restore
-dotnet build -c Release
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+dotnet publish -c Release -r win-x64 --self-contained false
 ```
 
 ## 使用
