@@ -21,7 +21,3 @@ publish/
 # Test results
 TestResults/
 *.trx
-
-# Agent instructions (local only)
-AGENTS.md
-AGENTS.md
