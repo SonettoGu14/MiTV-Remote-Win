@@ -13,6 +13,16 @@ internal static partial class NativeMethods
     // 参照原 Swift 项目 main.swift 中的 NSEvent.addLocalMonitorForEvents。
 
     public const int WH_KEYBOARD_LL = 13;
+    public const int HC_ACTION = 0;
+    public const int WM_KEYDOWN = 0x0100;
+    public const int WM_SYSKEYDOWN = 0x0104;
+
+    public const byte VK_BACK = 0x08;
+    public const byte VK_RETURN = 0x0D;
+    public const byte VK_LEFT = 0x25;
+    public const byte VK_UP = 0x26;
+    public const byte VK_RIGHT = 0x27;
+    public const byte VK_DOWN = 0x28;
 
     [DllImport("user32.dll")]
     public static extern nint SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, nint hMod, uint dwThreadId);
@@ -23,6 +33,9 @@ internal static partial class NativeMethods
     [DllImport("user32.dll")]
     public static extern nint CallNextHookEx(nint hhk, int nCode, nint wParam, nint lParam);
 
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    public static extern nint GetModuleHandle(string lpModuleName);
+
     public delegate nint LowLevelKeyboardProc(int nCode, nint wParam, nint lParam);
 
     // —— 显示器亮度 (DDC/CI) ——
@@ -30,6 +43,10 @@ internal static partial class NativeMethods
     // 参照原 Swift 项目 BrightnessController.swift。
 
     public const int MC_VCP_CODE_BRIGHTNESS = 0x10;
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool EnumDisplayMonitors(nint hdc, nint lprcClip, MonitorEnumProc lpfnEnum, nint dwData);
 
     [DllImport("dxva2.dll", EntryPoint = "GetNumberOfPhysicalMonitorsFromHMONITOR")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -48,6 +65,18 @@ internal static partial class NativeMethods
     [DllImport("dxva2.dll", EntryPoint = "SetVCPFeature")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool SetVCPFeature(nint hMonitor, byte bVCPCode, uint dwNewValue);
+
+    [DllImport("dxva2.dll", EntryPoint = "DestroyPhysicalMonitor")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool DestroyPhysicalMonitor(nint hMonitor);
+
+    public delegate bool MonitorEnumProc(nint hMonitor, nint hdcMonitor, nint lprcMonitor, nint dwData);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public int left, top, right, bottom;
+    }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public struct PhysicalMonitor

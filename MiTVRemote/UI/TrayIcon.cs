@@ -1,3 +1,5 @@
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using MiTVRemote.Services;
 
@@ -13,6 +15,7 @@ public class TrayIcon : IDisposable
     private readonly NotifyIcon _notifyIcon;
     private readonly IMiTvService _miTvService;
     private readonly DeviceDiscoveryService _discovery;
+    private readonly Icon? _appIcon;
     private ControlPanel? _panel;
 
     public TrayIcon(IMiTvService miTvService, DeviceDiscoveryService discovery)
@@ -22,12 +25,16 @@ public class TrayIcon : IDisposable
 
         _notifyIcon = new NotifyIcon
         {
-            Text = "小米电视遥控器",
+            Text = L.S("TrayTooltip"),
             Visible = true
         };
 
-        // TODO: 使用实际图标文件
-        // _notifyIcon.Icon = new Icon("Resources/app.ico");
+        var iconPath = Path.Combine(AppContext.BaseDirectory, "Resources", "app.ico");
+        if (File.Exists(iconPath))
+        {
+            _appIcon = new Icon(iconPath);
+            _notifyIcon.Icon = _appIcon;
+        }
 
         _notifyIcon.MouseClick += (_, e) =>
         {
@@ -36,9 +43,9 @@ public class TrayIcon : IDisposable
         };
 
         var contextMenu = new ContextMenuStrip();
-        contextMenu.Items.Add("打开遥控器", null, (_, _) => ShowControlPanel());
+        contextMenu.Items.Add(L.S("OpenRemote"), null, (_, _) => ShowControlPanel());
         contextMenu.Items.Add(new ToolStripSeparator());
-        contextMenu.Items.Add("退出", null, (_, _) => Application.Exit());
+        contextMenu.Items.Add(L.S("Exit"), null, (_, _) => Application.Exit());
         _notifyIcon.ContextMenuStrip = contextMenu;
     }
 
@@ -65,5 +72,6 @@ public class TrayIcon : IDisposable
         _panel?.Close();
         _panel = null;
         _notifyIcon.Dispose();
+        _appIcon?.Dispose();
     }
 }

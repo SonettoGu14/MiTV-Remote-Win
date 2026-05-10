@@ -59,45 +59,45 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppTitle" xml:space="preserve">
-    <value>MiTV Remote</value>
+    <value>小米电视遥控器</value>
   </data>
   <data name="TrayTooltip" xml:space="preserve">
-    <value>Xiaomi TV Remote</value>
+    <value>小米电视遥控器</value>
   </data>
   <data name="OpenRemote" xml:space="preserve">
-    <value>Open Remote</value>
+    <value>打开遥控器</value>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Exit</value>
+    <value>退出</value>
   </data>
   <data name="NotConnected" xml:space="preserve">
-    <value>Not Connected</value>
+    <value>未连接</value>
   </data>
   <data name="DiscoverDevices" xml:space="preserve">
-    <value>Discover Devices</value>
+    <value>发现设备</value>
   </data>
   <data name="Scanning" xml:space="preserve">
-    <value>Scanning...</value>
+    <value>扫描中...</value>
   </data>
   <data name="NoDevicesFound" xml:space="preserve">
-    <value>No devices found</value>
+    <value>未发现设备</value>
   </data>
   <data name="DeviceInfoFormat" xml:space="preserve">
-    <value>Device: {0} ({1})</value>
+    <value>设备: {0} ({1})</value>
   </data>
   <data name="DeviceLabel" xml:space="preserve">
-    <value>Device: {0}</value>
+    <value>设备: {0}</value>
   </data>
   <data name="ErrorFormat" xml:space="preserve">
-    <value>Error: {0}</value>
+    <value>错误: {0}</value>
   </data>
   <data name="NoMacError" xml:space="preserve">
-    <value>Cannot get device MAC address</value>
+    <value>无法获取设备MAC地址</value>
   </data>
   <data name="SelectDevice" xml:space="preserve">
-    <value>Select Device</value>
+    <value>选择设备</value>
   </data>
   <data name="Ok" xml:space="preserve">
-    <value>OK</value>
+    <value>确定</value>
   </data>
 </root>

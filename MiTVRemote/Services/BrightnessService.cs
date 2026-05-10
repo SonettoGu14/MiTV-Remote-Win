@@ -1,27 +1,84 @@
+using System.Runtime.InteropServices;
+using MiTVRemote.Native;
+
 namespace MiTVRemote.Services;
 
 /// <summary>
-/// 显示器亮度控制服务（通过 DDC/CI 或系统 API）。
-/// 一期仅搭建接口骨架，不做完整实现。
+/// 显示器亮度控制服务（通过 DDC/CI）。
 /// 参照原 Swift 项目 BrightnessController.swift。
 /// </summary>
 public class BrightnessService
 {
-    /// <summary>
-    /// 获取显示器当前亮度（0-100）。
-    /// 需要实现：通过 dxva2.dll GetMonitorBrightness 或 DDC/CI GetVCPFeature。
-    /// </summary>
-    public Task<int> GetBrightnessAsync(CancellationToken ct = default)
+    public Task<int?> GetBrightnessAsync(CancellationToken ct = default)
     {
-        throw new NotImplementedException("一期不做完整实现");
+        return Task.Run(() =>
+        {
+            int? result = null;
+            NativeMethods.EnumDisplayMonitors(nint.Zero, nint.Zero, (hMonitor, _, _, _) =>
+            {
+                if (result != null) return true;
+
+                if (!NativeMethods.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, out var count) || count == 0)
+                    return true;
+
+                var monitors = new NativeMethods.PhysicalMonitor[count];
+                if (!NativeMethods.GetPhysicalMonitorsFromHMONITOR(hMonitor, count, monitors))
+                    return true;
+
+                for (int i = 0; i < count; i++)
+                {
+                    var h = monitors[i].hPhysicalMonitor;
+                    try
+                    {
+                        if (result == null &&
+                            NativeMethods.GetVCPFeatureAndVCPFeatureReply(
+                                h, NativeMethods.MC_VCP_CODE_BRIGHTNESS, nint.Zero, out var current, out _))
+                        {
+                            result = (int)current;
+                        }
+                    }
+                    finally
+                    {
+                        NativeMethods.DestroyPhysicalMonitor(h);
+                    }
+                }
+
+                return true;
+            }, nint.Zero);
+
+            return result;
+        }, ct);
     }
 
-    /// <summary>
-    /// 设置显示器亮度（0-100）。
-    /// 需要实现：通过 dxva2.dll SetMonitorBrightness 或 DDC/CI SetVCPFeature。
-    /// </summary>
     public Task SetBrightnessAsync(int brightness, CancellationToken ct = default)
     {
-        throw new NotImplementedException("一期不做完整实现");
+        var clamped = Math.Clamp(brightness, 0, 100);
+        return Task.Run(() =>
+        {
+            NativeMethods.EnumDisplayMonitors(nint.Zero, nint.Zero, (hMonitor, _, _, _) =>
+            {
+                if (!NativeMethods.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, out var count) || count == 0)
+                    return true;
+
+                var monitors = new NativeMethods.PhysicalMonitor[count];
+                if (!NativeMethods.GetPhysicalMonitorsFromHMONITOR(hMonitor, count, monitors))
+                    return true;
+
+                for (int i = 0; i < count; i++)
+                {
+                    var h = monitors[i].hPhysicalMonitor;
+                    try
+                    {
+                        NativeMethods.SetVCPFeature(h, NativeMethods.MC_VCP_CODE_BRIGHTNESS, (uint)clamped);
+                    }
+                    finally
+                    {
+                        NativeMethods.DestroyPhysicalMonitor(h);
+                    }
+                }
+
+                return true;
+            }, nint.Zero);
+        }, ct);
     }
 }

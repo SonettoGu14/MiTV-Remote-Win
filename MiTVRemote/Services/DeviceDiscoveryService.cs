@@ -41,19 +41,23 @@ public class DeviceDiscoveryService
                     {
                         using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
                         cts.CancelAfter(450);
-                        if (await _miTvService.IsAliveAsync(ip, cts.Token))
+                        var device = await _miTvService.TryDiscoverAsync(ip, cts.Token);
+                        if (device != null)
                         {
-                            var info = await _miTvService.GetSystemInfoAsync(ip, ct);
-                            var name = "MiTV";
                             lock (results)
                             {
-                                results.Add(new MiTvDevice(name, ip));
+                                results.Add(device);
                             }
                         }
                     }
+                    catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                    {
+                        // Parent cancellation — propagate
+                        throw;
+                    }
                     catch
                     {
-                        // 连接失败或超时，忽略
+                        // Connection failed or timeout — ignore
                     }
                     finally
                     {

@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace MiTVRemote;
 
 /// <summary>
@@ -7,6 +5,8 @@ namespace MiTVRemote;
 /// </summary>
 public static class AppConfig
 {
+    private const string RegPath = @"HKEY_CURRENT_USER\Software\MiTVRemote";
+
     /// <summary>
     /// 上次连接的设备 IP 地址。
     /// 优先读取环境变量 TV_VOLUME_MITV_HOST，其次读取注册表。
@@ -20,10 +20,7 @@ public static class AppConfig
 
             try
             {
-                return Microsoft.Win32.Registry.GetValue(
-                    @"HKEY_CURRENT_USER\Software\MiTVRemote",
-                    "MiTVHost",
-                    "192.168.1.50") as string ?? "192.168.1.50";
+                return Microsoft.Win32.Registry.GetValue(RegPath, "MiTVHost", "192.168.1.50") as string ?? "192.168.1.50";
             }
             catch
             {
@@ -32,17 +29,25 @@ public static class AppConfig
         }
         set
         {
-            try
-            {
-                Microsoft.Win32.Registry.SetValue(
-                    @"HKEY_CURRENT_USER\Software\MiTVRemote",
-                    "MiTVHost",
-                    value);
-            }
-            catch
-            {
-                // 写入注册表失败则静默忽略
-            }
+            try { Microsoft.Win32.Registry.SetValue(RegPath, "MiTVHost", value); }
+            catch { }
+        }
+    }
+
+    /// <summary>
+    /// 上次连接的设备名称。
+    /// </summary>
+    public static string? DeviceName
+    {
+        get
+        {
+            try { return Microsoft.Win32.Registry.GetValue(RegPath, "DeviceName", null) as string; }
+            catch { return null; }
+        }
+        set
+        {
+            try { Microsoft.Win32.Registry.SetValue(RegPath, "DeviceName", value ?? ""); }
+            catch { }
         }
     }
 }

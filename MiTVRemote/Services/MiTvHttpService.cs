@@ -1,3 +1,4 @@
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -39,6 +40,25 @@ public class MiTvHttpService : IMiTvService, IDisposable
                !string.IsNullOrEmpty(dev.GetString());
     }
 
+    public async Task<MiTvDevice?> TryDiscoverAsync(string host, CancellationToken ct = default)
+    {
+        var url = $"http://{host}:6095/request?action=isalive";
+        var response = await _http.GetAsync(url, ct);
+        response.EnsureSuccessStatusCode();
+        var json = await response.Content.ReadAsStringAsync(ct);
+        using var doc = JsonDocument.Parse(json);
+        if (!doc.RootElement.TryGetProperty("data", out var data))
+            return null;
+
+        var name = data.TryGetProperty("devicename", out var dn) ? dn.GetString()
+                 : data.TryGetProperty("device", out var d) ? d.GetString()
+                 : null;
+        if (string.IsNullOrEmpty(name))
+            return null;
+
+        return new MiTvDevice(name, host);
+    }
+
     public async Task<VolumeStatus?> GetVolumeAsync(string host, CancellationToken ct = default)
     {
         var url = $"http://{host}:6095/controller?action=getvolume";
@@ -73,10 +93,39 @@ public class MiTvHttpService : IMiTvService, IDisposable
                s.GetBoolean();
     }
 
+    public async Task SetVolumeWithFallbackAsync(string host, int volume, string signingMac, CancellationToken ct = default)
+    {
+        try
+        {
+            if (await SetVolumeAsync(host, volume, signingMac, ct))
+                return;
+        }
+        catch
+        {
+            // Signed API failed, fall through to key press fallback
+        }
+
+        var current = await GetVolumeAsync(host, ct);
+        if (current == null) return;
+
+        var delta = volume - current.Volume;
+        if (delta == 0) return;
+
+        var key = delta > 0 ? KeyCode.VolumeUp : KeyCode.VolumeDown;
+        var steps = Math.Abs(delta);
+        for (int i = 0; i < steps; i++)
+        {
+            ct.ThrowIfCancellationRequested();
+            await SendKeyAsync(host, key, ct);
+            await Task.Delay(45, ct);
+        }
+    }
+
     public async Task SendKeyAsync(string host, string keyCode, CancellationToken ct = default)
     {
         var url = $"http://{host}:6095/controller?action=keyevent&keycode={keyCode}";
-        await _http.GetAsync(url, ct);
+        var response = await _http.GetAsync(url, ct);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task<bool> ChangeSourceAsync(string host, string sourceName, CancellationToken ct = default)
@@ -122,6 +171,6 @@ public class MiTvHttpService : IMiTvService, IDisposable
     private static string ComputeMd5Hex(string input)
     {
         var hash = MD5.HashData(Encoding.UTF8.GetBytes(input));
-        return Convert.ToHexStringLower(hash);
+        return Convert.ToHexString(hash).ToLowerInvariant();
     }
 }

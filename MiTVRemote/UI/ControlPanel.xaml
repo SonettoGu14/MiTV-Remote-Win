@@ -1,17 +1,16 @@
 <Window x:Class="MiTVRemote.UI.ControlPanel"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="小米电视遥控器"
+        Title="MiTV Remote"
         Width="280" Height="380"
         WindowStyle="ToolWindow"
         ResizeMode="CanResize"
         Topmost="True"
         ShowInTaskbar="False">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="12" Orientation="Vertical">
+    <StackPanel Margin="12" Orientation="Vertical">
 
             <!-- 设备信息 -->
-            <TextBlock Name="DeviceInfoLabel" Text="未连接"
+            <TextBlock Name="DeviceInfoLabel" Text=""
                        FontSize="12" Margin="0,0,0,8" />
 
             <!-- 音量区域 -->
@@ -63,9 +62,8 @@
             </StackPanel>
 
             <!-- 发现设备按钮 -->
-            <Button Name="DiscoverBtn" Content="发现设备" Width="100" Height="28"
+            <Button Name="DiscoverBtn" Width="100" Height="28"
                     HorizontalAlignment="Center" />
 
         </StackPanel>
-    </ScrollViewer>
 </Window>

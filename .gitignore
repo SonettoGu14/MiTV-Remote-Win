@@ -15,6 +15,9 @@ obj/
 # macOS
 .DS_Store
 
+# OpenCode
+AGENTS.md
+
 # Publish output
 publish/
 
